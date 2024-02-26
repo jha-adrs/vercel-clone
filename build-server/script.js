@@ -6,12 +6,12 @@ const { S3Client, PutObjectCommand } = require('@aws-sdk/client-s3')
 const s3Client = new S3Client({
     region: "ap-south-1",
     credentials: {
-        accessKeyId: "",
-        secretAccessKey: "",
+        accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+        secretAccessKey: process.env.AWS_ACCESS_SECRET,
     },
 });
 
-const PROJECT_ID = "";
+const PROJECT_ID = process.env.PROJECT_ID;
 
 async function init() {
     console.log('init');
@@ -35,7 +35,7 @@ async function init() {
             if (fs.lstatSync(filePath).isDirectory()) continue;
             console.log(`Uploading ${filePath}`)
             const command = new PutObjectCommand({
-                Bucket: "",
+                Bucket: process.env.AWS_S3_BUCKET,
                 Key: `__outputs/${PROJECT_ID}/${filePath}`,
                 Body: fs.createReadStream(filePath),
                 ContentType: mime.lookup(filePath) || 'application/octet-stream',
