@@ -40,7 +40,7 @@ async function init() {
             console.log(`Uploading ${filePath}`)
             const command = new PutObjectCommand({
                 Bucket: process.env.AWS_S3_BUCKET,
-                Key: `__outputs/${PROJECT_ID}/${filePath}`,
+                Key: `__outputs/${PROJECT_ID}/${file}`,
                 Body: fs.createReadStream(filePath),
                 ContentType: mime.lookup(filePath) || 'application/octet-stream',
             })
