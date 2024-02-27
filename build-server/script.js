@@ -2,6 +2,8 @@ const { exec } = require('child_process')
 const path = require('path')
 const fs = require('fs')
 const mime = require('mime-types')
+const dotenv = require('dotenv')
+dotenv.config({ path: path.join(__dirname, '.env') })
 const { S3Client, PutObjectCommand } = require('@aws-sdk/client-s3')
 const s3Client = new S3Client({
     region: "ap-south-1",
@@ -15,6 +17,7 @@ const PROJECT_ID = process.env.PROJECT_ID;
 
 async function init() {
     console.log('init');
+    console.log('Building project', process.env.PROJECT_ID, process.env.AWS_S3_BUCKET);
     const outDirPath = path.join(__dirname, 'output')
 
     const p = exec(`cd ${outDirPath} && npm install && npm run build`)
@@ -31,7 +34,8 @@ async function init() {
             recursive: true
         });
 
-        for (const filePath of folderContents) {
+        for (const file of folderContents) {
+            const filePath = path.join(distFolderPath, file)
             if (fs.lstatSync(filePath).isDirectory()) continue;
             console.log(`Uploading ${filePath}`)
             const command = new PutObjectCommand({
@@ -45,3 +49,4 @@ async function init() {
         }
     })
 }
+init()
